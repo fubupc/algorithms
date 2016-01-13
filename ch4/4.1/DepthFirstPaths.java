@@ -2,32 +2,27 @@ import java.util.ArrayList;
 
 class DepthFirstPaths {
     private boolean[] marked;
-    private ArrayList<Integer>[] paths;
+    private int[] edgeTo;
 
     public DepthFirstPaths(Graph g, int s) {
-        paths = (ArrayList<Integer>[]) new ArrayList[g.V()];
         marked = new boolean[g.V()];
+        edgeTo = new int[g.V()];
 
         for (int i = 0; i < g.V(); i++) {
-            paths[i] = null;
+            edgeTo[i] = -1;
             marked[i] = false;
         }
 
-        dfs(g, new ArrayList<Integer>(), s);
+        dfs(g, s);
     }
 
-    public void dfs(Graph g, ArrayList<Integer> path, int v) {
-        if (marked[v]) return;
-
+    public void dfs(Graph g, int v) {
         marked[v] = true;
-
-        ArrayList<Integer> copy = new ArrayList<Integer>(path);
-        copy.add(v);
-
-        paths[v] = copy;
-
         for (int w : g.adj(v)) {
-            dfs(g, copy, w);
+            if (!marked[w]) {
+                edgeTo[w] = v;
+                dfs(g, w);
+            }
         }
     }
 
@@ -36,21 +31,36 @@ class DepthFirstPaths {
     }
 
     public Iterable<Integer> pathTo(int v) {
-        return paths[v];
+        if (!marked[v]) return null;
+
+        Stack<Integer> path = new Stack<Integer>();
+
+        while (v != -1) {
+            path.push(v);
+            v = edgeTo[v];
+        }
+
+        return path;
     }
 
     public static void main(String[] args) {
         Graph g = new Graph(new In("tinyG.txt"));
-
         System.out.println(g);
 
-        DepthFirstPaths paths = new DepthFirstPaths(g, 3);
+        int s = 3;
+        DepthFirstPaths paths = new DepthFirstPaths(g, s);
 
-        int[] vertices = {0, 6, 7, 8, 9, 10};
+        for (int v = 0; v < g.V(); v++) {
+            if (paths.hasPathTo(v)) {
+                System.out.format("%d to %d: ", s, v);
 
-        for (int i = 0; i < vertices.length; i++) {
-            System.out.println("connected to " + vertices[i] + "? " + paths.hasPathTo(vertices[i]));
-            System.out.println("path to " + vertices[i] + ": " + paths.pathTo(vertices[i]));
+                for (int w : paths.pathTo(v)) {
+                    System.out.format(w + " ");
+                }
+            } else {
+                System.out.format("%d to %d: not connected.", s, v);
+            }
+            System.out.format("\n");
         }
     }
 
