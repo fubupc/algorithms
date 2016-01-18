@@ -2,57 +2,88 @@ class Cycle {
 
     private int[] edgeTo;
     private boolean[] marked;
-    private boolean hasCycle;
-    private int start;
+    private Stack<Integer> cycle;
 
     public Cycle(Graph G) {
+        if (hasSelfLoop(G)) return;
+        if (hasParallelEdges(G)) return;
+
         edgeTo = new int[G.V()];
         marked = new boolean[G.V()];
-
         for (int v = 0; v < G.V(); v++) {
             if (!marked[v]) {
-                if (dfs(G, v, -1)) {
-                    hasCycle = true;
-                    break;
-                }
+                dfs(G, v, -1);
+                if (cycle != null) return;
             }
         }
     }
 
-    public boolean dfs(Graph G, int v, int from) {
-        marked[v] = true;
-
-        for (int w : G.adj(v)) {
-            if (!marked[w]) {
-                edgeTo[w] = v;
-                if (dfs(G, w, v)) {
+    public boolean hasSelfLoop(Graph G) {
+        for (int v = 0; v < G.V(); v++) {
+            for (int w : G.adj(v)) {
+                if (w == v) {
+                    cycle = new Stack<Integer>();
+                    cycle.push(v);
+                    cycle.push(v);
                     return true;
                 }
-            } else if (w != from) {
-                start = w;
-                edgeTo[w] = v;
-                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasParallelEdges(Graph G) {
+        marked = new boolean[G.V()];
+
+        for (int v = 0; v < G.V(); v++) {
+            for (int w : G.adj(v)) {
+                if (marked[w]) {
+                    cycle = new Stack<Integer>();
+                    cycle.push(v);
+                    cycle.push(w);
+                    cycle.push(v);
+                    return true;
+                }
+
+                marked[w] = true;
+            }
+
+            for (int w : G.adj(v)) {
+                marked[w] = false;
             }
         }
 
         return false;
     }
 
-    public boolean hasCycle() {
-        return hasCycle;
+    public void dfs(Graph G, int v, int from) {
+        marked[v] = true;
+
+        for (int w : G.adj(v)) {
+            if (cycle != null) return;
+
+            if (!marked[w]) {
+                edgeTo[w] = v;
+                dfs(G, w, v);
+            } else if (w != from) {
+                cycle = new Stack<Integer>();
+
+                for (int x = v; x != w; x = edgeTo[x]) {
+                    cycle.push(x);
+                }
+
+                cycle.push(w);
+                cycle.push(v);
+            }
+        }
     }
 
-    public Iterable<Integer> one() {
-        if (!hasCycle) return null;
+    public boolean hasCycle() {
+        return cycle != null;
+    }
 
-        Stack<Integer> s = new Stack<Integer>();
-
-        s.push(start);
-        for (int v = edgeTo[start]; v != start; v = edgeTo[v]) {
-            s.push(v);
-        }
-        s.push(start);
-        return s;
+    public Iterable<Integer> cycle() {
+        return cycle;
     }
 
     public static void main(String[] args) {
@@ -62,7 +93,7 @@ class Cycle {
         Cycle c = new Cycle(g);
 
         if (c.hasCycle()) {
-            System.out.format("g has cycle: %s\n", c.one());
+            System.out.format("g has cycle: %s\n", c.cycle());
         } else {
             System.out.println("no cycle.");
         }
