@@ -22,8 +22,7 @@ class Bag<Item> implements Iterable<Item> {
     }
 
     public void add(Item item) {
-        if (!contains(item))
-            head = new Node<Item>(item, head);
+        head = new Node<Item>(item, head);
     }
 
     public boolean isEmpty() {
