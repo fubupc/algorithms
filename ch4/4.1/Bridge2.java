@@ -29,7 +29,8 @@ class Bridge2 {
                 dfs(G, w, v);
                 low[v] = Math.min(low[v], low[w]);
             } else if (w != from) {
-                low[v] = Math.min(low[v], low[w]);
+                low[v] = Math.min(low[v], pre[w]);
+                //low[v] = Math.min(low[v], low[w]);
             }
         }
     }
@@ -46,20 +47,51 @@ class Bridge2 {
         return low;
     }
 
-    public static void main(String[] args) {
-        Graph g = new Graph(new In("tinyG.txt"));
+    public static void print(Graph g) {
         System.out.println(g);
 
         Bridge2 b = new Bridge2(g);
 
-
         for (int v = 0; v < g.V(); v++) {
             System.out.format("%d: pre %d, low %d\n", v, b.pre()[v], b.low()[v]);
-
-            for (int w : g.adj(v)) {
-                System.out.format("%d to %d: %s\n", v, w, b.isBridge(v, w));
-            }
         }
+    }
+
+    public static void main(String[] args) {
+        //Graph g = new Graph(new In("tinyG.txt"));
+        Graph g1 = new Graph(5);
+        g1.addEdge(0, 2);
+        g1.addEdge(0, 1);
+        g1.addEdge(1, 4);
+        g1.addEdge(1, 3);
+        g1.addEdge(3, 4);
+        g1.addEdge(1, 2);
+
+        print(g1);
+
+        Graph g2 = new Graph(6);
+        g2.addEdge(0, 3);
+        g2.addEdge(0, 1);
+        g2.addEdge(1, 5);
+        g2.addEdge(1, 2);
+        g2.addEdge(2, 4);
+        g2.addEdge(2, 3);
+        g2.addEdge(4, 5);
+
+        System.out.println("");
+        print(g2);
+
+        Graph g3 = new Graph(6);
+        g3.addEdge(0, 1);
+        g3.addEdge(1, 5);
+        g3.addEdge(1, 2);
+        g3.addEdge(2, 4);
+        g3.addEdge(2, 3);
+        g3.addEdge(3, 5);
+        g3.addEdge(3, 4);
+
+        System.out.println("");
+        print(g3);
     }
 }
 
