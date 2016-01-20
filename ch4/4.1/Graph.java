@@ -27,6 +27,24 @@ class Graph {
         }
     }
 
+    public Graph(Graph G) {
+        this(G.V());
+
+        this.E = G.E();
+
+        for (int v = 0; v < G.V(); v++) {
+            Stack<Integer> reverse = new Stack<Integer>();
+
+            for (int w : G.adjList[v]) {
+                reverse.push(w);
+            }
+
+            for (int x : reverse) {
+                adjList[v].add(x);
+            }
+        }
+    }
+
     public int V() {
         return V;
     }
