@@ -4,13 +4,15 @@ import java.util.LinkedList;
 class BreadthFirstSearch {
     private boolean[] marked;
     private int[] edgeTo;
-    private int count;
+    private int[] distTo;
+
     private final int s;
 
     public BreadthFirstSearch(Graph g, int s) {
         marked = new boolean[g.V()];
         edgeTo = new int[g.V()];
-        count = 0;
+        distTo = new int[g.V()];
+
         this.s = s;
 
         bfs(g, s);
@@ -21,6 +23,7 @@ class BreadthFirstSearch {
 
         marked[s] = true;
         edgeTo[s] = s;
+        distTo[s] = 0;
         q.add(s);
 
         while (!q.isEmpty()) {
@@ -31,6 +34,7 @@ class BreadthFirstSearch {
                     System.out.format("enqueu: %d\n", w);
                     marked[w] = true;
                     edgeTo[w] = v;
+                    distTo[w] = distTo[v] + 1;
                     q.add(w);
                 }
             }
@@ -55,6 +59,10 @@ class BreadthFirstSearch {
         return path;
     }
 
+    public int distTo(int v) {
+        return distTo[v];
+    }
+
     public static void main(String[] args) {
         Graph g = new Graph(new In("tinyG.txt"));
         System.out.println(g);
@@ -64,7 +72,7 @@ class BreadthFirstSearch {
 
         for (int v = 0; v < g.V(); v++) {
             if (paths.hasPathTo(v)) {
-                System.out.format("%d to %d: ", s, v);
+                System.out.format("%d to %d (%d): ", s, v, paths.distTo(v));
 
                 for (int w : paths.pathTo(v)) {
                     System.out.format(w + " ");
