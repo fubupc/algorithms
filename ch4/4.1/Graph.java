@@ -68,6 +68,10 @@ class Graph {
         return adjList[v];
     }
 
+    public int degree(int v) {
+        return adjList[v].size();
+    }
+
     public String toString() {
         String out = "";
         for (int v = 0; v < V; v++) {
