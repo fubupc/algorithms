@@ -1,23 +1,32 @@
 import java.util.Queue;
+import java.util.Stack;
 import java.util.LinkedList;
 
-class BreadthFirstSearch {
+class BreadthFirstPaths {
     private boolean[] marked;
     private int[] edgeTo;
     private int[] distTo;
 
-    public BreadthFirstSearch(Graph g, int s) {
-        marked = new boolean[g.V()];
-        edgeTo = new int[g.V()];
-        distTo = new int[g.V()];
-
-        bfs(g, s);
-    }
-
-    public BreadthFirstSearch(Graph G, int[] sources) {
+    public BreadthFirstPaths(Graph G, int s) {
         marked = new boolean[G.V()];
         edgeTo = new int[G.V()];
         distTo = new int[G.V()];
+
+        for (int v = 0; v < G.V(); v++) {
+            distTo[v] = -1;
+        }
+
+        bfs(G, s);
+    }
+
+    public BreadthFirstPaths(Graph G, int[] sources) {
+        marked = new boolean[G.V()];
+        edgeTo = new int[G.V()];
+        distTo = new int[G.V()];
+
+        for (int v = 0; v < G.V(); v++) {
+            distTo[v] = -1;
+        }
 
         bfs(G, sources);
     }
@@ -92,30 +101,30 @@ class BreadthFirstSearch {
     }
 
     public static void main(String[] args) {
-        BreadthFirstSearch bfs;
+        BreadthFirstPaths bfs;
 
         Graph g = new Graph(new In("tinyG.txt"));
         System.out.println(g);
 
         int s = 3;
-        bfs = new BreadthFirstSearch(g, s);
+        bfs = new BreadthFirstPaths(g, s);
 
         System.out.println("Single Sources 3:");
         for (int v = 0; v < g.V(); v++) {
             if (bfs.hasPathTo(v)) {
-                System.out.format("%d to %d (%d): ", s, v, bfs.distTo(v));
+                System.out.format("%d (%d): ", v, bfs.distTo(v));
 
                 for (int w : bfs.pathTo(v)) {
                     System.out.format(w + " ");
                 }
             } else {
-                System.out.format("%d to %d: not connected.", s, v);
+                System.out.format("%d (%d): not connected.", v, bfs.distTo(v));
             }
             System.out.format("\n");
         }
 
         int[] sources = {3, 6, 12};
-        bfs = new BreadthFirstSearch(g, sources);
+        bfs = new BreadthFirstPaths(g, sources);
 
         System.out.println("\nMultiple Sources (3, 6, 12):");
         for (int v = 0; v < g.V(); v++) {
@@ -126,7 +135,7 @@ class BreadthFirstSearch {
                     System.out.format(w + " ");
                 }
             } else {
-                System.out.format("%d to %d: not connected.", s, v);
+                System.out.format("%d (%d): not connected.", v, bfs.distTo(v));
             }
             System.out.format("\n");
         }
