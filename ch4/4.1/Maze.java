@@ -119,10 +119,66 @@ public class Maze {
         else return 0;
     }
 
+    public void walk(int startX, int startY, int endX, int endY) {
+        for (int i = 1; i < rows - 1; i++) {
+            for (int j = 1; j < cols - 1; j++) {
+                marked[rows][cols] = false;
+            }
+        }
+
+        explore(startX, startY, endX, endY);
+    }
+
+    public void explore(int x, int y, int endX, int endY) {
+        marked[x][y] = true;
+
+        if (x == endX && y == endY) return;
+
+        if (!marked[x + 1][y]) {
+            explore(x + 1, y, endX, endY);
+        }
+
+        if (!marked[x][y + 1]) {
+            explore(x, y + 1, endX, endY);
+        }
+
+        if (!marked[x - 1][y]) {
+            explore(x - 1, y, endX, endY);
+        }
+
+        if (!marked[x][y - 1]) {
+            explore(x, y - 1, endX, endY);
+        }
+    }
+
+    public void draw() {
+        StdDraw.setScale(-0.05, 1.05);
+        StdDraw.setPenRadius(0.001);
+        StdDraw.setPenColor(StdDraw.BLUE);
+
+        double ru = 1.0 / (rows - 2);
+        double cu = 1.0 / (cols - 2);
+
+        for (int i = 1; i < rows - 1; i++) {
+            for (int j = 1; j < cols - 1; j++) {
+                if (!east[i][j - 1]) {
+                    StdDraw.line((j - 1) * cu, (rows - i - 1) * ru, (j - 1) * cu, (rows - i - 2) * ru);
+                }
+
+                if (!south[i - 1][j]) {
+                    StdDraw.line((j - 1) * cu, (rows - i - 1) * ru, j * cu, (rows - i - 1) * ru);
+                }
+            }
+        }
+
+        StdDraw.line(0, 0, 1, 0);
+        StdDraw.line(1, 0, 1, 1);
+    }
 
     public static void main(String[] args) {
         Maze m = new Maze(20, 20);
         System.out.println(m);
+        m.draw();
     }
 
 }
