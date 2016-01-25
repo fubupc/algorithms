@@ -17,14 +17,28 @@ public class Maze {
     public static final int N = 4;
 
     public Maze(int r, int c) {
-        rows = r;
-        cols = c;
+        rows = r + 2;
+        cols = c + 2;
 
         marked = new boolean[rows][cols];
         east = new boolean[rows][cols];
         south = new boolean[rows][cols];
 
-        dfs(0, 0);
+        for (int i = 0; i < rows; i++) {
+            marked[i][0] = true;
+            marked[i][cols - 1] = true;
+            south[i][0] = true;
+            south[i][cols - 1] = true;
+        }
+
+        for (int j = 0; j < cols; j++) {
+            marked[0][j] = true;
+            marked[rows - 1][j] = true;
+            east[0][j] = true;
+            east[rows - 1][j] = true;
+        }
+
+        dfs(1, 1);
     }
 
     public void dfs(int x, int y) {
@@ -57,19 +71,19 @@ public class Maze {
     public List<Integer> adj(int x, int y) {
         List<Integer> l = new ArrayList<Integer>();
 
-        if (y != cols - 1 && !marked[x][y + 1]) {
+        if (!marked[x][y + 1]) {
             l.add(E);
         }
 
-        if (x != rows - 1 && !marked[x + 1][y]) {
+        if (!marked[x + 1][y]) {
             l.add(S);
         }
 
-        if (y != 0 && !marked[x][y - 1]) {
+        if (!marked[x][y - 1]) {
             l.add(W);
         }
 
-        if (x != 0 && !marked[x - 1][y]) {
+        if (!marked[x - 1][y]) {
             l.add(N);
         }
 
@@ -83,39 +97,12 @@ public class Maze {
 
         int t, r, b, l;  // if top, right, bottom, left has bar.
        
-        for (int row = 0; row < rows + 1; row++) {
-            for (int col = 0; col < cols + 1; col++) {
-                if (row == 0) {
-                    t = 0;
-                } else if (col == 0) {
-                    t = 1;
-                } else {
-                    t = toInt(!east[row - 1][col - 1]);
-                }
-
-                if (col == cols) {
-                    r = 0;
-                } else if (row == 0) {
-                    r = 1;
-                } else {
-                    r = toInt(!south[row - 1][col]);
-                }
-
-                if (row == rows) {
-                    b = 0;
-                } else if (col == 0) {
-                    b = 1;
-                } else {
-                    b = toInt(!east[row][col - 1]);
-                }
-
-                if (col == 0) {
-                    l = 0;
-                } else if (row == 0) {
-                    l = 1;
-                } else {
-                    l = toInt(!south[row - 1][col - 1]);
-                }
+        for (int row = 1; row < rows; row++) {
+            for (int col = 1; col < cols; col++) {
+                t = toInt(!east[row - 1][col - 1]);
+                r = toInt(!south[row - 1][col]);
+                b = toInt(!east[row][col - 1]);
+                l = toInt(!south[row - 1][col - 1]);
 
                 int index = (t << 3) + (r << 2) + (b << 1) + l;
                 out += chars.charAt(index);
@@ -134,7 +121,7 @@ public class Maze {
 
 
     public static void main(String[] args) {
-        Maze m = new Maze(10, 10);
+        Maze m = new Maze(20, 20);
         System.out.println(m);
     }
 
