@@ -18,6 +18,8 @@ public class Maze {
     public static final int W = 3;
     public static final int E = 4;
 
+    private boolean done;
+
     public Maze(int N) {
         this.N = N;
 
@@ -115,41 +117,65 @@ public class Maze {
     }
 
     public void walk(int startX, int startY, int endX, int endY) {
-        for (int i = 1; i < N - 1; i++) {
-            for (int j = 1; j < N - 1; j++) {
-                marked[N][N] = false;
+        StdDraw.setPenColor(StdDraw.RED);
+        StdDraw.setPenRadius(0.01);
+        StdDraw.circle(startX + 0.5, startY + 0.5, 0.1);
+        StdDraw.circle(endX + 0.5, endY + 0.5, 0.1);
+
+        for (int x = 1; x <= N; x++) {
+            for (int y = 1; y <= N; y++) {
+                marked[x][y] = false;
             }
         }
 
+        done = false;
+
+        StdDraw.setPenRadius();
+
         explore(startX, startY, endX, endY);
+
+        System.out.println("done!");
     }
 
     public void explore(int x, int y, int endX, int endY) {
         marked[x][y] = true;
 
-        if (x == endX && y == endY) return;
+        StdDraw.setPenColor(StdDraw.BLUE);
+        StdDraw.show(100);
+        StdDraw.filledCircle(x + 0.5, y + 0.5, 0.1);
+        StdDraw.show();
 
-        if (!marked[x + 1][y]) {
-            explore(x + 1, y, endX, endY);
+        if (x == endX && y == endY) {
+            done = true;
+            return;
         }
 
-        if (!marked[x][y + 1]) {
-            explore(x, y + 1, endX, endY);
+        while (!done) {
+            if (!north[x][y] && !marked[x][y + 1]) {
+                explore(x, y + 1, endX, endY);
+            } else if (!south[x][y] && !marked[x][y - 1]) {
+                explore(x, y - 1, endX, endY);
+            } else if (!west[x][y] && !marked[x - 1][y]) {
+                explore(x - 1, y, endX, endY);
+            } else if (!east[x][y] && !marked[x + 1][y]) {
+                explore(x + 1, y, endX, endY);
+            } else {
+                break;
+            }
         }
 
-        if (!marked[x - 1][y]) {
-            explore(x - 1, y, endX, endY);
-        }
-
-        if (!marked[x][y - 1]) {
-            explore(x, y - 1, endX, endY);
+        if (!done) {
+            StdDraw.setPenColor(StdDraw.GRAY);
+            StdDraw.show(100);
+            StdDraw.filledCircle(x + 0.5, y + 0.5, 0.11);
+            StdDraw.show();
         }
     }
 
     public void draw() {
         StdDraw.setXscale(0, N + 2);
         StdDraw.setYscale(0, N + 2);
-        StdDraw.setPenColor(StdDraw.BLUE);
+        StdDraw.setPenColor(StdDraw.BLACK);
 
         for (int x = 1; x <= N; x++) {
             for (int y = 1; y <= N; y++) {
@@ -167,6 +193,7 @@ public class Maze {
         System.out.println(m);
         m.draw();
 
+        m.walk(1, 1, 10, 10);
     }
 
 }
