@@ -1,10 +1,12 @@
 class WeightedQuickUnionUF {
     private int[] parent;
     private int[] size;
+    private int count;
 
     public WeightedQuickUnionUF(int N) {
         parent = new int[N];
         size = new int[N];
+        count = N;
 
         for (int i = 0; i < N; i++) {
             parent[i] = i;
@@ -25,6 +27,8 @@ class WeightedQuickUnionUF {
             parent[qr] = pr;
             size[pr] += size[qr];
         }
+
+        count--;
     }
 
     public int find(int p) {
@@ -33,6 +37,10 @@ class WeightedQuickUnionUF {
         }
 
         return p;
+    }
+
+    public int count() {
+        return count;
     }
 
     public boolean connected(int p, int q) {
@@ -46,7 +54,11 @@ class WeightedQuickUnionUF {
         u.union(2, 3);
         u.union(3, 4);
         u.union(1, 4);
+        u.union(8, 9);
+        u.union(5, 7);
+        u.union(6, 5);
 
+        System.out.println("count: " + u.count());
         System.out.format("%d - %d: %s\n", 0, 3, u.connected(0, 3));
         System.out.format("%d - %d: %s\n", 0, 5, u.connected(0, 5));
     }

@@ -1,13 +1,14 @@
-class PercolationStats {
+import edu.princeton.cs.algs4.StdRandom;
+import edu.princeton.cs.algs4.StdStats;
+
+public class PercolationStats {
     private double[] threshold;
-    private int N;
     private int T;
 
     public PercolationStats(int N, int T) {
         if (N <= 0 || T <= 0)
             throw new IllegalArgumentException("N, T must be greater than 0.");
 
-        this.N = N;
         this.T = T;
 
         threshold = new double[T];
@@ -36,6 +37,7 @@ class PercolationStats {
     }
 
     public double stddev() {
+        if (T == 1) return Double.NaN;
         return StdStats.stddev(threshold);
     }
 
@@ -61,7 +63,8 @@ class PercolationStats {
 
         System.out.println("mean                    = " + stats.mean());
         System.out.println("stddev                  = " + stats.stddev());
-        System.out.println("95% confidence interval = " + stats.confidenceLo() + ", " + stats.confidenceHi());
+        System.out.println("95% confidence interval = " + stats.confidenceLo() +
+                ", " + stats.confidenceHi());
     }
 
 }
