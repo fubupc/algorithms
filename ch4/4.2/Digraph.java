@@ -55,6 +55,14 @@ class Digraph {
         E++;
     }
 
+    public boolean hasEdge(int v, int w) {
+        for (int x : adj[v]) {
+            if (x == w) return true;
+        }
+
+        return false;
+    }
+
     public Iterable<Integer> adj(int v) {
         return adj[v];
     }
@@ -91,6 +99,8 @@ class Digraph {
     public static void main(String[] args) {
         Digraph g = new Digraph(new In("tinyDG.txt"));
         System.out.println(g);
+        System.out.format("%d -> %d: %s\n", 0, 1, g.hasEdge(0, 1));
+        System.out.format("%d -> %d: %s\n", 1, 0, g.hasEdge(1, 0));
     }
 
 }
