@@ -1,11 +1,12 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import edu.princeton.cs.algs4.StdOut;
 
 public class Deque<Item> implements Iterable<Item> {
-    class Entry {
-        Item item;
-        Entry prev;
-        Entry next;
+    private class Entry {
+        private Item item;
+        private Entry prev;
+        private Entry next;
 
         public Entry(Item item, Entry prev, Entry next) {
             this.item = item;
@@ -44,14 +45,24 @@ public class Deque<Item> implements Iterable<Item> {
     public void addFirst(Item item) {
         if (item == null) throw new NullPointerException("Item cannot be null!");
 
-        sentinel.next = new Entry(item, sentinel, sentinel.next);
+        Entry oldFirst = sentinel.next;
+        Entry newFirst = new Entry(item, sentinel, oldFirst);
+        oldFirst.prev = newFirst;
+        sentinel.next = newFirst;
+
+        size++;
     }
 
     // add the item to the end
     public void addLast(Item item) {
         if (item == null) throw new NullPointerException("Item cannot be null!");
 
-        sentinel.prev = new Entry(item, sentinel.prev, sentinel);
+        Entry oldLast = sentinel.prev;
+        Entry newLast = new Entry(item, oldLast, sentinel);
+        oldLast.next = newLast;
+        sentinel.prev = newLast;
+
+        size++;
     }
 
     // remove and return the item from the front
@@ -62,6 +73,7 @@ public class Deque<Item> implements Iterable<Item> {
 
         sentinel.next = first.next;
         sentinel.next.prev = sentinel;
+        size--;
 
         return first.item;
     }
@@ -73,11 +85,12 @@ public class Deque<Item> implements Iterable<Item> {
         Entry last = sentinel.prev;
         sentinel.prev = last.prev;
         sentinel.prev.next = sentinel;
+        size--;
 
         return last.item;
     }
 
-    class DequeIterator implements Iterator<Item> {
+    private class DequeIterator implements Iterator<Item> {
         private int count;
         private Entry current;
 
@@ -87,7 +100,8 @@ public class Deque<Item> implements Iterable<Item> {
         }
 
         public Item next() {
-            if (count == size) throw new NoSuchElementException("Iterator runs out!");
+            if (count == size)
+                throw new NoSuchElementException("Iterator runs out!");
 
             Entry e = current;
             current = current.next;
@@ -100,7 +114,7 @@ public class Deque<Item> implements Iterable<Item> {
         }
 
         public void remove() {
-            throw new java.lang.UnsupportedOperationException("Cannot remove item when iterating.");
+            throw new UnsupportedOperationException("Remove not supported.");
         }
     }
 
@@ -111,5 +125,22 @@ public class Deque<Item> implements Iterable<Item> {
 
     // unit testing
     public static void main(String[] args) {
+        Deque<Integer> q = new Deque<Integer>();
+
+        q.addFirst(1);
+        q.addFirst(2);
+        q.addLast(3);
+        q.addFirst(4);
+        q.addLast(5);
+        q.addLast(6);
+
+        q.removeFirst();
+        q.removeLast();
+
+        StdOut.println("q size(): " + q.size());
+
+        for (int i : q) {
+            StdOut.println(i);
+        }
     }
 }
