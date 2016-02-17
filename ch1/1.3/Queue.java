@@ -6,14 +6,14 @@ import java.util.NoSuchElementException;
 public class Queue<Item> implements Iterable<Item> {
     private static final int INIT_CAPACITY = 2;
     private Item[] items;
-    private int head;
-    private int tail;
+    private int head; // index of first element
+    private int tail; // index of next available slot
     private int size;
 
     public Queue() {
         items = (Item[]) new Object[INIT_CAPACITY];
-        head = -1;
-        tail = -1;
+        head = 0;
+        tail = 0;
         size = 0;
     }
 
@@ -31,17 +31,14 @@ public class Queue<Item> implements Iterable<Item> {
 
         items = tmp;
         head = 0;
-        tail = size - 1;
+        tail = size;
     }
 
     public void enqueue(Item item) {
         if (size == items.length) resize(items.length * 2);
 
-        if (head == -1) head = 0;
-
-        if (++tail == items.length) tail = 0;
-
-        items[tail] = item;
+        items[tail++] = item;
+        if (tail == items.length) tail = 0;
         size++;
     }
 
@@ -49,36 +46,35 @@ public class Queue<Item> implements Iterable<Item> {
         if (size == 0)
             throw new NoSuchElementException("Queue is empty!");
 
-        Item item = items[head++];
+        Item item = items[head];
+        items[head] = null;
+        head++;
+        size--;
 
         if (head == items.length) head = 0;
 
-        size--;
+        if (size == items.length / 4) resize(items.length / 2);
 
         return item;
     }
 
     private class QueueIterator implements Iterator<Item> {
-        private int h;
-        private int t;
-        private int count;
+        private int i;
 
         public QueueIterator() {
-            h = head;
-            count = size;
+            i = 0;
         }
 
         public boolean hasNext() {
-            return count > 0;
+            return i < size;
         }
 
         public Item next() {
             if (!hasNext())
                 throw new NoSuchElementException("Iterator runs out.");
 
-            Item item = items[h];
-            h = (h + 1) % items.length;
-            count--;
+            Item item = items[(head + i) % items.length];
+            i++;
 
             return item;
         }
