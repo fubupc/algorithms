@@ -25,18 +25,9 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
 
     private void resize(int newSize) {
-        // System.out.format("resize: %d -> %d\n", size, newSize);
-
         Item[] tmp = (Item[]) new Object[newSize];
 
-        int count;
-        if (size < newSize) {
-            count = size;
-        } else {
-            count = newSize;
-        }
-
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < size; i++) {
             tmp[i] = items[i];
         }
 
@@ -129,6 +120,10 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
         for (int i = 0; i < inputs.length; i++) {
             q.enqueue(inputs[i]);
+        }
+
+        for (int j = 0; j < 8; j++) {
+            q.dequeue();
         }
 
         for (String s : q) {
