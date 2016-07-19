@@ -7,6 +7,7 @@ public class BellmanFord {
 	private Queue<Integer> q;
 	private double[] distTo;
 	private DirectedEdge[] edgeTo;
+	private boolean[] onQueue;
 
 	public BellmanFord(EdgeWeightedDigraph G, int s) {
 		distTo = new double[G.V()];
@@ -16,16 +17,19 @@ public class BellmanFord {
 		distTo[s] = 0.00;
 
 		edgeTo = new DirectedEdge[G.V()];
-		q = new Queue<Integer>();
+		onQueue = new boolean[G.V()];
 
+		q = new Queue<Integer>();
 		search(G, s);
 	}
 
 	public void search(EdgeWeightedDigraph G, int s) {
 		q.enqueue(s);
+		onQueue[s] = true;
 
 		while (!q.isEmpty()) {
 			int v = q.dequeue();
+			onQueue[v] = false;
 
 			for (DirectedEdge e : G.adj(v)) {
 				int w = e.to();
@@ -34,7 +38,10 @@ public class BellmanFord {
 					distTo[w] = distTo[v] + e.weight();
 					edgeTo[w] = e;
 
-					q.enqueue(w);
+					if (!onQueue[w]) {
+						q.enqueue(w);
+						onQueue[w] = true;
+					}
 				}
 			}
 		}
