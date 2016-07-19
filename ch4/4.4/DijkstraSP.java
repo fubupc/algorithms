@@ -1,7 +1,7 @@
 import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.IndexMinPQ;
 import edu.princeton.cs.algs4.Stack;
-import java.util.List;
 
 public class DijkstraSP {
 	private DirectedEdge[] edgeTo;
@@ -58,16 +58,17 @@ public class DijkstraSP {
 		return distTo[v] != Double.POSITIVE_INFINITY;
 	}
 
-	public Stack shortest(int v) {
+	public double distTo(int v) {
+		return distTo[v];
+	}
+
+	public Iterable<DirectedEdge> pathTo(int v) {
 		if (!hasPathTo(v)) return null;
 
-		Stack<Integer> st = new Stack<Integer>();
-		st.push(v);
+		Stack<DirectedEdge> st = new Stack<DirectedEdge>();
 
-		while (edgeTo[v] != null) {
-			DirectedEdge e = edgeTo[v];
-			st.push(e.from());
-			v = e.from();
+		for (DirectedEdge e = edgeTo[v]; e != null; e = edgeTo[e.from()]) {
+			st.push(e);
 		}
 
 		return st;
@@ -75,11 +76,13 @@ public class DijkstraSP {
 
 	public static void main(String[] args) {
 		EdgeWeightedDigraph G = new EdgeWeightedDigraph(new In(args[0]));
+		int s = Integer.parseInt(args[1]);
 
-		DijkstraSP sp = new DijkstraSP(G, Integer.parseInt(args[1]));
+		DijkstraSP sp = new DijkstraSP(G, s);
 
 		for (int v = 0; v < G.V(); v++) {
-			System.out.println(v + " " + sp.shortest(v));
+			StdOut.printf("%d to %d (%.2f)  ", s, v, sp.distTo(v));
+			StdOut.println(sp.pathTo(v));
 		}
 	}
 }
